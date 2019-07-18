@@ -20,8 +20,17 @@ X = X - np.mean(X) / np.std(X)
 # grads = L_model_backward(AL, Y, caches)
 # print(grads)
 
-layer_dims = (784, 50, 50, 25, 10)
-learning_rate = 0.01
-num_iterations = 2000
+layer_dims = (784, 25, 10)
+learning_rate = 0.001
+num_iterations = 500
 
-L_layer_model(X, Y, layer_dims, learning_rate, num_iterations)
+parameters = L_layer_model(X, Y, layer_dims, learning_rate, num_iterations)
+
+AL = L_model_forward(X, parameters)
+
+accuracy = results(AL, Y)
+
+# X = pd.DataFrame(X)
+# X[X > 0] = 1
+# X[X <= 0] = 0
+# print(np.array(X).mean())

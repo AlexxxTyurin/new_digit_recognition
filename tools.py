@@ -12,6 +12,10 @@ def relu(Z):
     return np.array(Z)
 
 
+def tanh(Z):
+    return np.tanh(Z)
+
+
 def initialize_parameters(layer_dims):
     parameters = {}
     L = len(layer_dims)
@@ -71,9 +75,17 @@ def sigmoid_backward(dA, cache):
 
 def relu_bacward(dA, cache):
     A_prev, Z, W, b = cache
-    dZ = dA * (1 - np.power(Z, 2))
+    Z = pd.DataFrame(Z)
+    Z[Z > 0] = 1
+    Z[Z <= 0] = 0
+    dZ = dA * np.array(Z)
 
     return dZ
+
+
+def tanh_backward(dA, cache):
+    A_prev, Z, W, b = cache
+    dZ = dA * (1 - np.power(Z, 2))
 
 
 def linear_activation_backward(dA, cache, activation):
@@ -121,6 +133,15 @@ def update_parameters(parameters, grads, learning_rate):
         parameters["b" + str(l + 1)] -= learning_rate * grads["db" + str(l + 1)]
 
     return parameters
+
+
+def results(AL, Y):
+    Al = pd.DataFrame(AL)
+    AL[AL > 0.5] = 1
+    AL[AL <= 0.5] = 0
+    AL = np.array(AL)
+    print(np.array((AL == Y), dtype=float).mean())
+
 
 
 def L_layer_model(X, Y, layer_dims, learning_rate, num_iterations):
