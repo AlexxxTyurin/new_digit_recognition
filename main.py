@@ -26,10 +26,11 @@ num_iterations = 500
 
 parameters = L_layer_model(X, Y, layer_dims, learning_rate, num_iterations)
 
-AL = L_model_forward(X, parameters)
+AL, caches = L_model_forward(X, parameters)
 
 accuracy = results(AL, Y)
 
+print(accuracy)
 # X = pd.DataFrame(X)
 # X[X > 0] = 1
 # X[X <= 0] = 0

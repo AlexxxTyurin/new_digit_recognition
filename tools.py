@@ -21,7 +21,7 @@ def initialize_parameters(layer_dims):
     L = len(layer_dims)
 
     for l in range(1, L):
-        parameters["W" + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) * 0.001
+        parameters["W" + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) * 0.01
         parameters["b" + str(l)] = np.zeros((layer_dims[l], 1))
 
     return parameters
@@ -136,11 +136,11 @@ def update_parameters(parameters, grads, learning_rate):
 
 
 def results(AL, Y):
-    Al = pd.DataFrame(AL)
-    AL[AL > 0.5] = 1
-    AL[AL <= 0.5] = 0
-    AL = np.array(AL)
-    print(np.array((AL == Y), dtype=float).mean())
+    al = pd.DataFrame(AL)
+    al[al > 0.5] = 1
+    al[al <= 0.5] = 0
+    al = np.array(AL)
+    print(np.array((al == Y), dtype=float).mean())
 
 
 
