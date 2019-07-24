@@ -143,7 +143,6 @@ def results(AL, Y):
     print(np.array((al == Y), dtype=float).mean())
 
 
-
 def L_layer_model(X, Y, layer_dims, learning_rate, num_iterations):
     costs = []
 
