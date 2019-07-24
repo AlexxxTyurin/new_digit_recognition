@@ -16,13 +16,20 @@ def tanh(Z):
     return np.tanh(Z)
 
 
-def initialize_parameters(layer_dims):
+def initialize_parameters(layer_dims, initialization_parameter = "he"):
     parameters = {}
     L = len(layer_dims)
 
-    for l in range(1, L):
-        parameters["W" + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) * 0.01
-        parameters["b" + str(l)] = np.zeros((layer_dims[l], 1))
+    if initialization_parameter == "normal":
+        for l in range(1, L):
+            parameters["W" + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) * 0.01
+            parameters["b" + str(l)] = np.zeros((layer_dims[l], 1))
+
+    elif initialization_parameter == "he":
+        for l in range(1, L):
+            parameters["W" + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) * np.sqrt(2/layer_dims[l-1])
+            parameters["b" + str(l)] = np.zeros((layer_dims[l], 1))
+
 
     return parameters
 
@@ -143,10 +150,10 @@ def results(AL, Y):
     print(np.array((al == Y), dtype=float).mean())
 
 
-def L_layer_model(X, Y, layer_dims, learning_rate, num_iterations):
+def L_layer_model(X, Y, layer_dims, learning_rate, num_iterations, initialization_parameter):
     costs = []
 
-    parameters = initialize_parameters(layer_dims)
+    parameters = initialize_parameters(layer_dims, initialization_parameter)
 
     for i in range(num_iterations):
         AL, caches = L_model_forward(X, parameters)
