@@ -20,10 +20,10 @@ X = X - np.mean(X) / np.std(X)
 
 layer_dims = (784, 25, 10)
 learning_rate = 0.001
-num_iterations = 50
+num_iterations = 25
 
 parameters1 = L_layer_model(X, Y, layer_dims, learning_rate, num_iterations, "he")
-parameters2 = L_layer_model(X, Y, layer_dims, learning_rate, num_iterations, "normal")
+parameters2 = L_layer_model(X, Y, layer_dims, learning_rate, num_iterations, "he", "dropout", 0.5)
 
 AL1, caches1 = L_model_forward(X, parameters1)
 AL2, caches2 = L_model_forward(X, parameters2)

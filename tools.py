@@ -2,20 +2,24 @@ import numpy as np
 import pandas as pd
 
 
+# This is the sigmoid activation function. It is often used in the final layer of the model
 def sigmoid(Z):
     return 1 / (1 + np.exp(-Z))
 
 
+# This is the ReLU activation function
 def relu(Z):
     Z = pd.DataFrame(Z)
     Z[Z <= 0] = 0
     return np.array(Z)
 
 
+# This is hyperbolic tangent activation function
 def tanh(Z):
     return np.tanh(Z)
 
 
+# This function creates a dictionary called "parameters", where "Weights" and "Biases" matrices are being stored
 def initialize_parameters(layer_dims, initialization_parameter="he"):
     parameters = {}
     L = len(layer_dims)
@@ -33,6 +37,8 @@ def initialize_parameters(layer_dims, initialization_parameter="he"):
     return parameters
 
 
+# This function is used for one step forward propagation. According to the parameter "activation", this function uses
+# different activation functions. In addition, this function implements dropout.
 def linear_activation_forward(A_prev, W, b, activation, keep_prop):
     Z = np.dot(W, A_prev) + b
     D = np.random.rand(Z.shape[0], Z.shape[1])
@@ -46,11 +52,12 @@ def linear_activation_forward(A_prev, W, b, activation, keep_prop):
         A = tanh(Z)
 
     A = A * D
-    cache = (A_prev, Z, W, b)
+    cache = (A_prev, Z, W, b, D)
     return A, cache
 
 
-def L_model_forward(X, parameters, regular_type, keep_prop):
+# This functions is used to make a full forward propagation.
+def L_model_forward(X, parameters, regular_type="none", keep_prop=0):
     caches = {}
     A = X
     L = len(parameters) // 2
@@ -83,15 +90,16 @@ def L_model_forward(X, parameters, regular_type, keep_prop):
     return AL, caches
 
 
+# This function computes the error of the model.
 def compute_cost(AL, Y, regular_type, parameters):
     m = Y.shape[1]
     cost = -(Y * np.log(AL) + (1 - Y) * np.log(1 - AL)).sum() / m
 
     l2_cost = 0
     L = len(parameters) // 2
-
-    for i in range(1, L):
-        l2_cost += np.sum(parameters["W" + str(i)])
+    if regular_type == "l2":
+        for i in range(1, L):
+            l2_cost += np.sum(np.power(parameters["W" + str(i)], 2))
 
     cost += l2_cost
 
@@ -99,27 +107,28 @@ def compute_cost(AL, Y, regular_type, parameters):
 
 
 def sigmoid_backward(dA, cache):
-    A_prev, Z, W, b = cache
-    dZ = dA * (sigmoid(Z) * (1 - sigmoid(Z)))
+    A_prev, Z, W, b, D = cache
+    dZ = dA * (sigmoid(Z) * (1 - sigmoid(Z))) * D
 
     return dZ
 
 
 def relu_bacward(dA, cache):
-    A_prev, Z, W, b = cache
+    A_prev, Z, W, b, D = cache
     Z = pd.DataFrame(Z)
     Z[Z > 0] = 1
     Z[Z <= 0] = 0
-    dZ = dA * np.array(Z)
+    dZ = dA * np.array(Z) * D
 
     return dZ
 
 
 def tanh_backward(dA, cache):
-    A_prev, Z, W, b = cache
-    dZ = dA * (1 - np.power(Z, 2))
+    A_prev, Z, W, b, D = cache
+    dZ = dA * (1 - np.power(Z, 2)) * D
 
 
+# This function is used to make a back propagation step.
 def linear_activation_backward(dA, cache, activation):
     if activation == "relu":
         dZ = relu_bacward(dA, cache)
@@ -127,7 +136,7 @@ def linear_activation_backward(dA, cache, activation):
     elif activation == "sigmoid":
         dZ = sigmoid_backward(dA, cache)
 
-    A_prev, Z, W, b = cache
+    A_prev, Z, W, b, D = cache
     m = A_prev.shape[1]
 
     dA_prev = np.dot(W.T, dZ)
@@ -137,6 +146,7 @@ def linear_activation_backward(dA, cache, activation):
     return dA_prev, dW, db
 
 
+# This function is used to make a full back propagation.
 def L_model_backward(AL, Y, caches):
     grads = {}
     L = len(caches)
@@ -157,6 +167,7 @@ def L_model_backward(AL, Y, caches):
     return grads
 
 
+# This function is used to change the weights
 def update_parameters(parameters, grads, learning_rate):
     L = len(parameters) // 2
 
@@ -189,9 +200,6 @@ def L_layer_model(X, Y, layer_dims, learning_rate, num_iterations, initializatio
 
         parameters = update_parameters(parameters, grads, learning_rate)
 
-        # if i & 100 == 0:
-        #     costs.append(cost)
-        #     print(cost)
         print(f"Epoch: {i}, error: {cost}")
 
     return parameters
