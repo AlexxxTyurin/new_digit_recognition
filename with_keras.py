@@ -15,6 +15,12 @@ X = np.array(data.iloc[:, 1:])
 X = X - np.mean(X) / np.std(X)
 X = np.reshape(X, [m, 28, 28, 1])
 
+Y_train = Y[:int(0.8 * m), :]
+Y_dev = Y[int(0.8 * m):, :]
+
+X_train = X[:int(0.8 * m), :]
+X_dev = X[int(0.8 * m):, :]
+
 print(X.shape)
 print(Y.shape)
 
@@ -46,13 +52,16 @@ def gestures_model(input_shape):
     return model
 
 
-model = gestures_model(X.shape[1:])
+model = gestures_model(X_train.shape[1:])
 model.compile('adam', 'categorical_crossentropy', metrics=['accuracy'])
-model.fit(X, Y, epochs=100, batch_size=100)
+model.fit(X_train, Y_train, epochs=2, batch_size=100)
 
-print(model.evaluate(X, Y))
+predictions_train = model.evaluate(X_train, Y_train)
 
-predictions = model.evaluate(X, Y)
+print("Loss in a training set = " + str(predictions_train[0]))
+print("Accuracy in a training set= " + str(predictions_train[1]))
 
-print("Loss = " + str(predictions[0]))
-print("Dev Accuracy = " + str(predictions[1]))
+predictions_dev = model.evaluate(X_dev, Y_dev)
+
+print("Loss in a training set = " + str(predictions_dev[0]))
+print("Accuracy in a training set= " + str(predictions_dev[1]))
