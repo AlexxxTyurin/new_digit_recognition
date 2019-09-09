@@ -8,17 +8,6 @@ Y = np.array([np.eye(10)[el[0], :] for el in Y]).T
 
 X = np.array(data.iloc[:, 1:]).T
 X = X - np.mean(X) / np.std(X)
-# print(X.shape)
-#
-# parameters = initialize_parameters((784, 500, 250, 100, 50, 10))
-#
-# AL, caches = L_model_forward(X, parameters)
-#
-# for key, value in caches.items():
-#     print(f"{key}: shape of A_prev: {value[0].shape}, shape of Z: {value[1].shape}, shape of W: {value[2].shape}, shape of b: {value[3].shape}")
-#
-# grads = L_model_backward(AL, Y, caches)
-# print(grads)
 
 layer_dims = (784, 25, 10)
 learning_rate = 0.001
